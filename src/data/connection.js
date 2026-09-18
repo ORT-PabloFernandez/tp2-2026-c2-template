@@ -27,4 +27,5 @@ export function getDb() {
     if(!db) {
         throw new Error("La conexion no esta abierta, LLamar a connectToDatabase primero");
     }
+    return db;
 }
