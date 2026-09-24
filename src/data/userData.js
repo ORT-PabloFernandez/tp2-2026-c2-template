@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
-import { getDb } from "./connection.js";
+import { connectToDatabase, getDb } from "./connection.js";
+import bcrypt from "bcrypt";
 
 function getCollection() {
     return getDb().collection("users");
@@ -27,4 +28,31 @@ export async function findUserById(id) {
     if (!_id) return null;
     const user = await getCollection().findOne({ _id });
     return mapUser(user);
+}
+
+export async function registerUser({name, email, password}) {
+    await connectToDatabase();
+    const db = getDb();
+
+    // verificar si el email ya existe
+    const existingUser = await db.collection('users').findOne({email});
+
+    if(existingUser) {
+        throw new Error("El email ya esta registrado");        
+    }
+
+    // hacer el hash de la contraseña
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newUser = {
+        name, 
+        email, 
+        password: hashedPassword
+    };
+
+    console.log("Nuevo usuario a registrar", newUser);
+    const result = await db.collection("users").insertOne(newUser);
+
+    return result;
 }
