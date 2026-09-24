@@ -1,4 +1,5 @@
-import { listUsers, getUserById,  registerUserService} from "../services/userService.js";
+import { listUsers, getUserById,  registerUserService, loginUserServices} from "../services/userService.js";
+import jwt from "jsonwebtoken";
 
 function handleServiceError(error, res, next) {
     if (error.statusCode) {
@@ -44,3 +45,25 @@ export async function registerUserController(req, res){
         res.status(500).json({message: "Error interno al registrar un usuario"});
     }
 }
+
+export async function loginUserController(req, res) {
+    const {email, password} = req.body;
+    if(!email || !password) {
+        return res.status(400).json({message:"Email y password son requeridos "});
+    }
+
+    try {
+        const user = await loginUserServices(email, password);
+        // generar el token JWT
+        const token = jwt.sign({_id: user._id, email: user.email}, process.env.SECRET, {expiresIn: '1h'} );
+        res.json({message: "Login exitoso", user, token});
+
+    } catch (error) {
+        if(error.message == "Credenciales inválidas") {
+            return res.status(401).json({message: error.message});
+        }
+        console.error(error);
+        res.status(500).json({message: "error desconocido al hacer login"});
+    }
+}
+

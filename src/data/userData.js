@@ -56,3 +56,22 @@ export async function registerUser({name, email, password}) {
 
     return result;
 }
+
+export async function findByCredentials(email, password) {
+    await connectToDatabase();
+    const db = getDb();
+    const user = await db.collection("users").findOne({email});
+    if(!user) {
+        // no encontro el email
+        return null;
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if(!isMatch) {
+        // password no coincide
+        return null;
+    }
+
+    return user;
+}

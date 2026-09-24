@@ -1,4 +1,4 @@
-import { findAllUsers, findUserById, registerUser } from "../data/userData.js";
+import { findAllUsers, findUserById, registerUser, findByCredentials } from "../data/userData.js";
 
 function createHttpError(statusCode, message) {
     const error = new Error(message);
@@ -35,5 +35,15 @@ export async function registerUserService({name, email, password}) {
         console.log(error.message);
         throw new Error("Error al registrar el usuario");
     }
+}
+
+export async function loginUserServices(email, password) {
+    const user = await findByCredentials(email, password);
+    if(!user) {
+        throw new Error("Credenciales inválidas");        
+    }
+    // No deberiamos devolver la constraseña
+    const {password: _pw, ...userWithoutPassword} = user;
+    return userWithoutPassword;
 }
 
