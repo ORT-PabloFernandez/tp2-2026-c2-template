@@ -16,7 +16,7 @@ function handleServiceError(error, res, next) {
 export async function getProducts(req, res, next) {
     try {
         const { category, brand } = req.query;
-        const products = listProducts({ category, brand });
+        const products = await listProducts({ category, brand });
         res.status(200).json({ data: products });
     } catch (error) {
         handleServiceError(error, res, next);
@@ -26,7 +26,7 @@ export async function getProducts(req, res, next) {
 export async function getProduct(req, res, next) {
     try {
         const { id } = req.params;
-        const product = findProductById(id);
+        const product = await findProductById(id);
         res.status(200).json({ data: product });
     } catch (error) {
         handleServiceError(error, res, next);
@@ -35,7 +35,7 @@ export async function getProduct(req, res, next) {
 
 export async function createProduct(req, res, next) {
     try {
-        const product = addProduct(req.body);
+        const product = await addProduct(req.body);
         res.status(201).json({ message: "Producto creado", data: product });
     } catch (error) {
         handleServiceError(error, res, next);
@@ -45,7 +45,7 @@ export async function createProduct(req, res, next) {
 export async function updateProduct(req, res, next) {
     try {
         const { id } = req.params;
-        const product = replaceProduct(id, req.body);
+        const product = await replaceProduct(id, req.body);
         res.status(200).json({ message: "Producto actualizado", data: product });
     } catch (error) {
         handleServiceError(error, res, next);
@@ -55,7 +55,7 @@ export async function updateProduct(req, res, next) {
 export async function deleteProduct(req, res, next) {
     try {
         const { id } = req.params;
-        removeProduct(id);
+        await removeProduct(id);
         res.status(204).send();
     } catch (error) {
         handleServiceError(error, res, next);

@@ -32,46 +32,36 @@ function validateProductData(data) {
     }
 }
 
-export function listProducts(filters = {}) {
-    let products = getAllProducts();
-    const { category, brand } = filters;
-
-    if (category) {
-        products = products.filter((product) => product.category.toLowerCase() === String(category).toLowerCase());
-    }
-    if (brand) {
-        products = products.filter((product) => product.brand.toLowerCase() === String(brand).toLowerCase());
-    }
-
-    return products;
+export async function listProducts(filters = {}) {
+    return await getAllProducts(filters);
 }
 
-export function findProductById(id) {
-    const product = getProductById(id);
+export async function findProductById(id) {
+    const product = await getProductById(id);
     if (!product) {
         throw createHttpError(404, "Producto no encontrado");
     }
     return product;
 }
 
-export function addProduct(data) {
+export async function addProduct(data) {
     validateProductData(data);
     const { name, brand, category, price, stock } = data;
-    return createProduct({ name: name.trim(), brand: brand.trim(), category: category.trim(), price, stock });
+    return await createProduct({ name: name.trim(), brand: brand.trim(), category: category.trim(), price, stock });
 }
 
-export function replaceProduct(id, data) {
+export async function replaceProduct(id, data) {
     validateProductData(data);
     const { name, brand, category, price, stock } = data;
-    const updated = updateProduct(id, { name: name.trim(), brand: brand.trim(), category: category.trim(), price, stock });
+    const updated = await updateProduct(id, { name: name.trim(), brand: brand.trim(), category: category.trim(), price, stock });
     if (!updated) {
         throw createHttpError(404, "Producto no encontrado");
     }
     return updated;
 }
 
-export function removeProduct(id) {
-    const deleted = deleteProduct(id);
+export async function removeProduct(id) {
+    const deleted = await deleteProduct(id);
     if (!deleted) {
         throw createHttpError(404, "Producto no encontrado");
     }

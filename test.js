@@ -1,9 +1,9 @@
 import "dotenv/config";
 
-//import { connectToDatabase } from "./src/data/connection.js";
+import { connectToDatabase } from "./src/data/connection.js";
 import { findAllUsers, findUserById } from "./src/data/userData.js";
 
-//await connectToDatabase();
+await connectToDatabase();
 
 //const users = await findAllUsers();
 //console.log(users);
